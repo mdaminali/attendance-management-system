@@ -1,3 +1,13 @@
 Here our todo list page:
 
 
+admin:
+
+1 sir can take multiple course.
+
+sir can set class date.
+
+sir can send a message for students.
+
+sir can view present/absent student of a class.
+

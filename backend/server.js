@@ -1,7 +1,22 @@
 const express = require("express")
 const mysql = require("mysql2")
 
+app.use(bodyParser.json())
+
+const cors = require("cors")
+
 const app = express()
+
+app.use(cors())
+
+const corsOptions = {
+	origin: "http://localhost:3001", // Replace with the frontend's origin
+	methods: ["GET", "POST", "PUT", "DELETE"],
+	credentials: true, // Allow cookies and other credentials
+}
+
+app.use(cors(corsOptions))
+
 const PORT = 3001
 
 // Middleware to parse JSON requests
@@ -34,6 +49,21 @@ app.get("/students", (req, res) => {
 		} else {
 			res.status(200).json(results)
 		}
+	})
+})
+
+app.post("/api/adminLogin", (req, res) => {
+	// Extract data sent from the frontend
+	const { email, password } = req.body
+
+	// Print the data to the console
+	console.log("Email:", email)
+	console.log("Password:", password)
+
+	// Respond to the frontend
+	res.status(200).json({
+		message: "Data received successfully!",
+		receivedData: { email, password },
 	})
 })
 

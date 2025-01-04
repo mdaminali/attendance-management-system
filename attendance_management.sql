@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2025 at 07:09 PM
+-- Generation Time: Jan 04, 2025 at 08:30 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,6 +42,27 @@ INSERT INTO `students` (`id`, `name`, `age`, `grade`) VALUES
 (1, 'John Doe', 18, '12th'),
 (2, 'Jane Doe', 17, '11th');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `teachers`
+--
+
+CREATE TABLE `teachers` (
+  `id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `md5_password` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `teachers`
+--
+
+INSERT INTO `teachers` (`id`, `email`, `md5_password`) VALUES
+(1, 'user1@example.com', 'f925916e2754e5e03f75dd58a5733251'),
+(2, 'user2@example.com', 'f925916e2754e5e03f75dd58a5733251'),
+(3, 'user3@example.com', 'f925916e2754e5e03f75dd58a5733251');
+
 --
 -- Indexes for dumped tables
 --
@@ -53,6 +74,12 @@ ALTER TABLE `students`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `teachers`
+--
+ALTER TABLE `teachers`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -61,6 +88,12 @@ ALTER TABLE `students`
 --
 ALTER TABLE `students`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `teachers`
+--
+ALTER TABLE `teachers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
