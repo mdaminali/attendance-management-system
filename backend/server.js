@@ -73,6 +73,31 @@ app.post("/api/adminLogin", (req, res) => {
 	})
 })
 
+app.post("/api/teacherAdd", (req, res) => {
+	const { email, password } = req.body
+
+	if (!email || !password) {
+		return res.status(400).json({ message: "Email and password are required!" })
+	}
+
+	const query = "INSERT INTO teachers (email, password) VALUES (?, ?)"
+	db.query(query, [email, password], (err, result) => {
+		console.log(result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result?.insertId > 0) {
+			// Successful login
+			res.status(200).json({ message: "Add successfully!" })
+		} else {
+			// User not found
+			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`)

@@ -19,7 +19,7 @@ const schema = yup
 
 export default function Login() {
 	const [loginSuccess, setLoginSuccess] = useState(false)
-	const [userInfo, setUserInfo] = useState(null)
+	const [adminInfo, setAdminInfo] = useState(null)
 
 	const {
 		register,
@@ -31,9 +31,9 @@ export default function Login() {
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
-			const storedUserInfo = localStorage.getItem("userInfo")
-			if (storedUserInfo) {
-				let jsonData = JSON.parse(storedUserInfo)
+			const storedAdminInfo = localStorage.getItem("adminInfo")
+			if (storedAdminInfo) {
+				let jsonData = JSON.parse(storedAdminInfo)
 				if (jsonData?.type === "admin") {
 					setLoginSuccess(true)
 				}
@@ -55,7 +55,7 @@ export default function Login() {
 
 			if (res.data?.message === "Login successful!") {
 				toast.success("Login successful!")
-				localStorage.setItem("userInfo", JSON.stringify(res.data))
+				localStorage.setItem("adminInfo", JSON.stringify(res.data))
 				setLoginSuccess(true)
 			} else {
 				toast.error(res.data?.message || "Unexpected response")
