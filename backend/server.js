@@ -1,33 +1,30 @@
 const express = require("express")
 const mysql = require("mysql2")
-
-app.use(bodyParser.json())
+const bodyParser = require("body-parser")
 
 const cors = require("cors")
 
 const app = express()
 
+app.use(bodyParser.json())
 app.use(cors())
 
 const corsOptions = {
-	origin: "http://localhost:3001", // Replace with the frontend's origin
+	origin: "http://localhost:3000", // Replace with the frontend's origin
 	methods: ["GET", "POST", "PUT", "DELETE"],
 	credentials: true, // Allow cookies and other credentials
 }
 
 app.use(cors(corsOptions))
+app.use(express.json())
 
 const PORT = 3001
 
-// Middleware to parse JSON requests
-app.use(express.json())
-
-// Create a connection to the database
 const db = mysql.createConnection({
 	host: "localhost",
-	user: "root", // Replace with your MySQL username
-	password: "", // Replace with your MySQL password
-	database: "attendance_management", // Name of your database
+	user: "root",
+	password: "",
+	database: "attendance_management",
 })
 
 // Connect to the database
@@ -53,17 +50,26 @@ app.get("/students", (req, res) => {
 })
 
 app.post("/api/adminLogin", (req, res) => {
-	// Extract data sent from the frontend
 	const { email, password } = req.body
 
-	// Print the data to the console
-	console.log("Email:", email)
-	console.log("Password:", password)
+	if (!email || !password) {
+		return res.status(400).json({ message: "Email and password are required!" })
+	}
 
-	// Respond to the frontend
-	res.status(200).json({
-		message: "Data received successfully!",
-		receivedData: { email, password },
+	const query = "SELECT * FROM admins WHERE email = ? AND password = ?" // Password checking for simplicity here
+	db.query(query, [email, password], (err, result) => {
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result.length > 0) {
+			// Successful login
+			res.status(200).json({ message: "Login successful!", user: result[0]?.email, type: "admin" })
+		} else {
+			// User not found
+			res.status(404).json({ message: "User does not exist in the database." })
+		}
 	})
 })
 

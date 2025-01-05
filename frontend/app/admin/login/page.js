@@ -1,9 +1,13 @@
 "use client"
 
-import React from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
+import axios from "axios"
+import { toast } from "react-toastify"
+
+import { redirect, usePathname, useSearchParams } from "next/navigation"
 
 // Yup validation schema
 const schema = yup
@@ -14,6 +18,9 @@ const schema = yup
 	.required()
 
 export default function Login() {
+	const [loginSuccess, setLoginSuccess] = useState(false)
+	const [userInfo, setUserInfo] = useState(null)
+
 	const {
 		register,
 		handleSubmit,
@@ -22,15 +29,55 @@ export default function Login() {
 		resolver: yupResolver(schema),
 	})
 
-	// Form submission handler
-	const onSubmit = (data) => {
-		console.log(data) // Handle login logic here
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			const storedUserInfo = localStorage.getItem("userInfo")
+			if (storedUserInfo) {
+				let jsonData = JSON.parse(storedUserInfo)
+				if (jsonData?.type === "admin") {
+					setLoginSuccess(true)
+				}
+			}
+		}
+	}, [])
+
+	useEffect(() => {
+		console.log("loginSuccess", loginSuccess)
+		if (!loginSuccess) return
+		redirect("/admin/dashboard")
+	}, [loginSuccess])
+
+	const onSubmit = async (data) => {
+		console.log("Form data:", data)
+
+		try {
+			const res = await axios.post("http://localhost:3001/api/adminLogin", data)
+
+			if (res.data?.message === "Login successful!") {
+				toast.success("Login successful!")
+				localStorage.setItem("userInfo", JSON.stringify(res.data))
+				setLoginSuccess(true)
+			} else {
+				toast.error(res.data?.message || "Unexpected response")
+			}
+
+			console.log("Server response:", res.data)
+		} catch (error) {
+			if (error.response) {
+				const errorMessage = error.response.data?.message || "An error occurred!"
+				toast.error(errorMessage)
+			} else if (error.request) {
+				toast.error("Server did not respond. Please try again later.")
+			} else {
+				toast.error("An unexpected error occurred.")
+			}
+		}
 	}
 
 	return (
 		<div className="flex items-center justify-center min-h-screen bg-gray-100">
 			<div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-				<h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login</h2>
+				<h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Admin login</h2>
 				<form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
 					{/* Email Field */}
 					<div>
