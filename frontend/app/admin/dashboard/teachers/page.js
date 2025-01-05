@@ -20,7 +20,8 @@ const schema = yup
 
 const Teachers = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(false)
-	const [open, setOpen] = React.useState(false)
+	const [open, setOpen] = useState(false)
+	const [deleteItem, setDeleteItem] = useState()
 
 	const {
 		register,
@@ -162,7 +163,7 @@ const Teachers = () => {
 											</svg>
 										</button>
 										{/* Delete Icon */}
-										<button onClick={() => handleDelete(row.id)} className="text-red-600 hover:text-red-800">
+										<button onClick={() => setDeleteItem(row.id)} className="text-red-600 hover:text-red-800">
 											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
 												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
 											</svg>
@@ -199,6 +200,19 @@ const Teachers = () => {
 						<span>Cancel</span>
 					</Button>
 					<Button variant="gradient" color="green" onClick={handleSubmit(onSubmit)}>
+						<span>Submit</span>
+					</Button>
+				</DialogFooter>
+			</Dialog>
+
+			<Dialog open={deleteItem ? true : false} handler={() => setDeleteItem(deleteItem ? null : deleteItem)}>
+				<DialogHeader>Account remove</DialogHeader>
+				<DialogBody>Are you sure you want to delete this item?</DialogBody>
+				<DialogFooter>
+					<Button variant="text" color="gray" onClick={() => setDeleteItem(null)} className="mr-1">
+						<span>Cancel</span>
+					</Button>
+					<Button variant="gradient" color="red" onClick={handleSubmit(onSubmit)}>
 						<span>Submit</span>
 					</Button>
 				</DialogFooter>
