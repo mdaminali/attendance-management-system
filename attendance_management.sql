@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2025 at 08:30 PM
+-- Generation Time: Jan 06, 2025 at 08:34 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,27 @@ SET time_zone = "+00:00";
 --
 -- Database: `attendance_management`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courses`
+--
+
+CREATE TABLE `courses` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `code` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `courses`
+--
+
+INSERT INTO `courses` (`id`, `email`, `code`, `title`) VALUES
+(3, 'user1@example.com', '123', 'test'),
+(4, 'user1@example.com', '455455', 'fdsfsfsff');
 
 -- --------------------------------------------------------
 
@@ -51,21 +72,26 @@ INSERT INTO `students` (`id`, `name`, `age`, `grade`) VALUES
 CREATE TABLE `teachers` (
   `id` int(11) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `md5_password` varchar(32) NOT NULL
+  `password` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `teachers`
 --
 
-INSERT INTO `teachers` (`id`, `email`, `md5_password`) VALUES
-(1, 'user1@example.com', 'f925916e2754e5e03f75dd58a5733251'),
+INSERT INTO `teachers` (`id`, `email`, `password`) VALUES
 (2, 'user2@example.com', 'f925916e2754e5e03f75dd58a5733251'),
 (3, 'user3@example.com', 'f925916e2754e5e03f75dd58a5733251');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `courses`
+--
+ALTER TABLE `courses`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `students`
@@ -82,6 +108,12 @@ ALTER TABLE `teachers`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `courses`
+--
+ALTER TABLE `courses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `students`
