@@ -56,7 +56,7 @@ app.post("/api/adminLogin", (req, res) => {
 		return res.status(400).json({ message: "Email and password are required!" })
 	}
 
-	const query = "SELECT * FROM admins WHERE email = ? AND password = ?" // Password checking for simplicity here
+	const query = "SELECT * FROM admins WHERE email = ? AND password = ?"
 	db.query(query, [email, password], (err, result) => {
 		if (err) {
 			console.error("Database error:", err)
@@ -69,6 +69,18 @@ app.post("/api/adminLogin", (req, res) => {
 		} else {
 			// User not found
 			res.status(404).json({ message: "User does not exist in the database." })
+		}
+	})
+})
+
+app.get("/api/teachers", (req, res) => {
+	const query = "SELECT * FROM teachers"
+
+	db.query(query, (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch teachers" })
+		} else {
+			res.status(200).json(results)
 		}
 	})
 })
@@ -94,6 +106,55 @@ app.post("/api/teacherAdd", (req, res) => {
 		} else {
 			// User not found
 			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
+app.delete("/api/teacherDelete", (req, res) => {
+	const { id } = req.body
+
+	if (!id) {
+		return res.status(400).json({ message: "ID is required!" })
+	}
+
+	const query = "DELETE from teachers where id=?"
+	db.query(query, [id], (err, result) => {
+		console.log(result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result?.affectedRows > 0) {
+			// Successful login
+			res.status(200).json({ message: "Delete successfully!" })
+		} else {
+			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
+// Teacher page login
+app.post("/api/teacherLogin", (req, res) => {
+	const { email, password } = req.body
+
+	if (!email || !password) {
+		return res.status(400).json({ message: "Email and password are required!" })
+	}
+
+	const query = "SELECT * FROM teachers WHERE email = ? AND password = ?"
+	db.query(query, [email, password], (err, result) => {
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result.length > 0) {
+			// Successful login
+			res.status(200).json({ message: "Login successful!", user: result[0]?.email, type: "teacher" })
+		} else {
+			// User not found
+			res.status(404).json({ message: "User does not exist in the database." })
 		}
 	})
 })

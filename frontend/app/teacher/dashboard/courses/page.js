@@ -77,9 +77,9 @@ const Teachers = () => {
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
-			const storedAdminInfo = localStorage.getItem("adminInfo")
-			if (!storedAdminInfo) {
-				redirect("/admin/login")
+			const storedTeacherInfo = localStorage.getItem("teacherInfo")
+			if (!storedTeacherInfo) {
+				redirect("/teacher/login")
 			} else getTeachers()
 		}
 	}, [])
@@ -140,13 +140,23 @@ const Teachers = () => {
 				<nav>
 					<ul>
 						<li>
-							<Link href="/admin/dashboard" className="block px-4 py-2 hover:bg-gray-700 ">
+							<Link href="/teacher/dashboard" className="block px-4 py-2 hover:bg-gray-700 ">
 								Home
 							</Link>
 						</li>
 						<li>
-							<Link href="/admin/dashboard/teachers" className="block px-4 py-2 hover:bg-gray-700 bg-gray-700">
-								Teachers
+							<Link href="/teacher/dashboard/courses" className="block px-4 py-2 hover:bg-gray-700 bg-gray-700">
+								Courses
+							</Link>
+						</li>
+						<li>
+							<Link href="/teacher/dashboard/schedule" className="block px-4 py-2 hover:bg-gray-700">
+								Schedule
+							</Link>
+						</li>
+						<li>
+							<Link href="/teacher/dashboard/students" className="block px-4 py-2 hover:bg-gray-700">
+								Students
 							</Link>
 						</li>
 					</ul>

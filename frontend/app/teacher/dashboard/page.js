@@ -11,13 +11,12 @@ import * as yup from "yup"
 
 const Dashboard = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(false)
-	// const [redirectToLogin, setRedirectToLogin] = useState(false)
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
-			const storedAdminInfo = localStorage.getItem("adminInfo")
-			if (!storedAdminInfo) {
-				redirect("/admin/login")
+			const storedTeacherInfo = localStorage.getItem("teacherInfo")
+			if (!storedTeacherInfo) {
+				redirect("/teacher/login")
 			}
 		}
 	}, [])
@@ -27,7 +26,7 @@ const Dashboard = () => {
 	}
 
 	const handleSignOut = () => {
-		localStorage.removeItem("adminInfo")
+		localStorage.removeItem("teacherInfo")
 		toast.success("Signed Out")
 		redirect("/")
 	}
@@ -50,7 +49,7 @@ const Dashboard = () => {
 
 				{/* Right side (Hello, Amin + Sign Out button) */}
 				<div className="flex items-center space-x-4">
-					<div className="text-sm">Hello, Admin</div>
+					{/* <div className="text-sm">Hello, Admin</div> */}
 					<button onClick={handleSignOut} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
 						Sign Out
 					</button>
@@ -63,20 +62,25 @@ const Dashboard = () => {
 				<nav>
 					<ul>
 						<li>
-							<Link href="/admin/dashboard" className="block px-4 py-2 hover:bg-gray-700 bg-gray-700">
+							<Link href="/teacher/dashboard" className="block px-4 py-2 hover:bg-gray-700 bg-gray-700">
 								Home
 							</Link>
 						</li>
 						<li>
-							<Link href="/admin/dashboard/teachers" className="block px-4 py-2 hover:bg-gray-700">
-								Teachers
+							<Link href="/teacher/dashboard/courses" className="block px-4 py-2 hover:bg-gray-700">
+								Courses
 							</Link>
 						</li>
-						{/* <li>
-							<Link href="#" className="block px-4 py-2 hover:bg-gray-700">
-								Profile
+						<li>
+							<Link href="/teacher/dashboard/schedule" className="block px-4 py-2 hover:bg-gray-700">
+								Schedule
 							</Link>
-						</li> */}
+						</li>
+						<li>
+							<Link href="/teacher/dashboard/students" className="block px-4 py-2 hover:bg-gray-700">
+								Students
+							</Link>
+						</li>
 					</ul>
 				</nav>
 
@@ -102,17 +106,17 @@ const Dashboard = () => {
 					{/* Card 1 */}
 					<div className="bg-white p-6 rounded-lg shadow-md">
 						<h2 className="text-xl font-semibold">Total Students</h2>
-						<p className="text-4xl font-bold mt-2">200</p>
+						<p className="text-4xl font-bold mt-2">100</p>
 					</div>
 					{/* Card 2 */}
 					<div className="bg-white p-6 rounded-lg shadow-md">
-						<h2 className="text-xl font-semibold">Total Teachers</h2>
-						<p className="text-4xl font-bold mt-2">24</p>
+						<h2 className="text-xl font-semibold">Total Courses</h2>
+						<p className="text-4xl font-bold mt-2">2</p>
 					</div>
 					{/* Card 3 */}
 					<div className="bg-white p-6 rounded-lg shadow-md">
 						<h2 className="text-xl font-semibold">Today total present</h2>
-						<p className="text-4xl font-bold mt-2">160</p>
+						<p className="text-4xl font-bold mt-2">60</p>
 					</div>
 				</div>
 			</div>
