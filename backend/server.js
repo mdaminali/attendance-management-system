@@ -159,6 +159,82 @@ app.post("/api/teacherLogin", (req, res) => {
 	})
 })
 
+// all course related api
+
+app.get("/api/courses", (req, res) => {
+	const query = "SELECT * FROM courses"
+
+	db.query(query, (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch courses" })
+		} else {
+			res.status(200).json(results)
+		}
+	})
+})
+
+app.post("/api/courseAdd", (req, res) => {
+	const { email, code, title } = req.body
+
+	if (!email || !code || !title) {
+		return res.status(400).json({ message: "All field are required!" })
+	}
+
+	const query = "INSERT INTO courses (email, code, title) VALUES (?, ?, ?)"
+	db.query(query, [email, code, title], (err, result) => {
+		console.log(result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result?.insertId > 0) {
+			// Successful login
+			res.status(200).json({ message: "Add successfully!" })
+		} else {
+			// User not found
+			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
+app.delete("/api/courseDelete", (req, res) => {
+	const { id } = req.body
+
+	if (!id) {
+		return res.status(400).json({ message: "ID is required!" })
+	}
+
+	const query = "DELETE from courses where id=?"
+	db.query(query, [id], (err, result) => {
+		console.log(result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result?.affectedRows > 0) {
+			// Successful login
+			res.status(200).json({ message: "Delete successfully!" })
+		} else {
+			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
+app.get("/api/teacherWiseCourses", (req, res) => {
+	const { email } = req.query
+	const query = "SELECT * FROM courses where email=?"
+
+	db.query(query, [email], (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch courses" })
+		} else {
+			res.status(200).json(results)
+		}
+	})
+})
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`)

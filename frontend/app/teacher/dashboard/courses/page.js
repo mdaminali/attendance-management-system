@@ -16,18 +16,20 @@ import * as yup from "yup"
 const schema = yup
 	.object({
 		email: yup.string().email("Invalid email address").required("Email is required"),
-		password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+		code: yup.string().max(50, "Course code must be at most 50 characters").required("Course code is required"),
+		title: yup.string().max(255, "Course title must be at most 255 characters").required("Course title is required"),
 	})
 	.required()
 
-const Teachers = () => {
+const Courses = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(false)
 	const [open, setOpen] = useState(false)
 	const [deleteItem, setDeleteItem] = useState()
 	const [loading, setLoading] = useState(false)
-	const [allTeachers, setAllTeachers] = useState()
+	const [allCourses, setAllCourses] = useState()
+	const [teacherInfo, setTeacherInfo] = useState()
 
-	console.log(allTeachers)
+	console.log(allCourses)
 
 	const {
 		register,
@@ -36,30 +38,35 @@ const Teachers = () => {
 		setValue,
 	} = useForm({
 		resolver: yupResolver(schema),
+		values: {
+			email: teacherInfo?.user,
+		},
 	})
+
+	console.log(teacherInfo)
 
 	const handleOpen = () => setOpen(!open)
 
 	const onSubmit = async (data) => {
 		console.log("Form data:", data)
-		const res = await axios.post("http://localhost:3001/api/teacherAdd", data)
+		const res = await axios.post("http://localhost:3001/api/courseAdd", data)
 
 		if (res?.data) {
 			toast.success("Add successfully!")
 			handleOpen()
-			getTeachers()
+			getCourses()
 			setValue("email", "")
 			setValue("password", "")
 		}
 	}
 
-	const getTeachers = async () => {
+	const getCourses = async () => {
 		try {
-			const res = await axios.get("http://localhost:3001/api/teachers")
+			const res = await axios.get("http://localhost:3001/api/courses")
 			console.log("Server response:", res)
 
 			if (res.data) {
-				setAllTeachers(res.data)
+				setAllCourses(res.data)
 			} else {
 				toast.error(res.data?.message || "Unexpected response")
 			}
@@ -80,7 +87,10 @@ const Teachers = () => {
 			const storedTeacherInfo = localStorage.getItem("teacherInfo")
 			if (!storedTeacherInfo) {
 				redirect("/teacher/login")
-			} else getTeachers()
+			} else {
+				getCourses()
+				setTeacherInfo(JSON.parse(storedTeacherInfo))
+			}
 		}
 	}, [])
 
@@ -98,14 +108,14 @@ const Teachers = () => {
 		const body = {
 			id: deleteItem,
 		}
-		const res = await axios.delete("http://localhost:3001/api/teacherDelete", { data: body })
+		const res = await axios.delete("http://localhost:3001/api/courseDelete", { data: body })
 
 		console.log(res)
 
 		if (res?.data) {
 			toast.success("Delete successfully!")
 			setDeleteItem(null)
-			getTeachers()
+			getCourses()
 		}
 	}
 
@@ -155,8 +165,8 @@ const Teachers = () => {
 							</Link>
 						</li>
 						<li>
-							<Link href="/teacher/dashboard/students" className="block px-4 py-2 hover:bg-gray-700">
-								Students
+							<Link href="/teacher/dashboard/attendace" className="block px-4 py-2 hover:bg-gray-700">
+								Attendace
 							</Link>
 						</li>
 					</ul>
@@ -176,7 +186,7 @@ const Teachers = () => {
 			<div className="flex-1 bg-gray-100 p-6 ml-0 md:ml-64 transition-all duration-300">
 				{/* Dashboard Content */}
 				<div className="mb-6 flex justify-between items-center">
-					<h1 className="text-3xl font-semibold">Teachers</h1>
+					<h1 className="text-3xl font-semibold">Courses</h1>
 					<button onClick={handleOpen} className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition">
 						Add
 					</button>
@@ -192,15 +202,17 @@ const Teachers = () => {
 							<thead className="bg-gray-200">
 								<tr>
 									<th className="px-4 py-2 text-left font-semibold">ID</th>
-									<th className="px-4 py-2 text-left font-semibold">Email</th>
+									<th className="px-4 py-2 text-left font-semibold">Course code</th>
+									<th className="px-4 py-2 text-left font-semibold">Course title</th>
 									<th className="px-4 py-2 text-left font-semibold">Actions</th>
 								</tr>
 							</thead>
 							<tbody>
-								{allTeachers?.map((row) => (
+								{allCourses?.map((row) => (
 									<tr key={row.id} className="border-b">
 										<td className="px-4 py-2">{row.id}</td>
-										<td className="px-4 py-2">{row.email}</td>
+										<td className="px-4 py-2">{row.code}</td>
+										<td className="px-4 py-2">{row.title}</td>
 										<td className="px-4 py-2 flex space-x-2">
 											{/* Edit Icon */}
 											{/* Correct Edit Icon (Pencil) */}
@@ -227,23 +239,23 @@ const Teachers = () => {
 				)}
 			</div>
 			<Dialog open={open} handler={handleOpen}>
-				<DialogHeader>Add/Edit teacher</DialogHeader>
+				<DialogHeader>Add course</DialogHeader>
 				<DialogBody>
 					<div>
-						<label htmlFor="email" className="block text-sm font-medium text-gray-700">
-							Email
+						<label htmlFor="code" className="block text-sm font-medium text-gray-700">
+							Course Code
 						</label>
-						<input type="text" id="email" placeholder="Enter your email" className={`w-full px-4 py-2 mt-1 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`} {...register("email")} />
-						{errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+						<input type="text" id="code" placeholder="Enter your code" className={`w-full px-4 py-2 mt-1 border ${errors.code ? "border-red-500" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`} {...register("code")} />
+						{errors.code && <p className="text-red-500 text-xs mt-1">{errors.code.message}</p>}
 					</div>
 
 					{/* Password Field */}
 					<div>
-						<label htmlFor="password" className="block text-sm font-medium text-gray-700">
-							Password
+						<label htmlFor="title" className="block text-sm font-medium text-gray-700">
+							Title
 						</label>
-						<input type="password" id="password" placeholder="Enter your password" className={`w-full px-4 py-2 mt-1 border ${errors.password ? "border-red-500" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`} {...register("password")} />
-						{errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+						<input type="text" id="title" placeholder="Enter your title" className={`w-full px-4 py-2 mt-1 border ${errors.title ? "border-red-500" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`} {...register("title")} />
+						{errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
 					</div>
 				</DialogBody>
 				<DialogFooter>
@@ -257,7 +269,7 @@ const Teachers = () => {
 			</Dialog>
 
 			<Dialog open={deleteItem ? true : false} handler={() => setDeleteItem(deleteItem ? null : deleteItem)}>
-				<DialogHeader>Account remove</DialogHeader>
+				<DialogHeader>Delete</DialogHeader>
 				<DialogBody>Are you sure you want to delete this item?</DialogBody>
 				<DialogFooter>
 					<Button variant="text" color="gray" onClick={() => setDeleteItem(null)} className="mr-1">
@@ -272,4 +284,4 @@ const Teachers = () => {
 	)
 }
 
-export default Teachers
+export default Courses
