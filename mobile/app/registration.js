@@ -5,6 +5,7 @@ import * as Yup from "yup"
 import { Link } from "expo-router"
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import axios from "axios"
+import { Toast } from "toastify-react-native"
 
 // Validation Schema
 const validationSchema = Yup.object().shape({
@@ -20,10 +21,14 @@ const Registration = () => {
 		try {
 			const res = await axios.post("http://192.168.0.106:3001/api/studentAdd", values)
 			console.log("data", res?.data)
+			if (res?.data) {
+				Toast.success(res.data?.message)
+			}
 
 			// setData(response.data)
 		} catch (err) {
 			console.log(err)
+			Toast.error(err?.message ? err?.message : "Something wrong")
 			// setError("Failed to fetch data")
 		} finally {
 			// setLoading(false)

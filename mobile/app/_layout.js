@@ -5,12 +5,13 @@ import { View } from "react-native"
 export default function RootLayout() {
 	return (
 		<>
-			<ToastManager />
+			<ToastManager position="bottom" animationStyle={"rightInOut"} />
 
 			<Stack>
 				<Stack.Screen name="index" options={{ headerShown: false }} />
 				<Stack.Screen name="registration" />
 				<Stack.Screen name="login" />
+				<Stack.Screen name="home" options={{ headerShown: false }} />
 			</Stack>
 		</>
 	)

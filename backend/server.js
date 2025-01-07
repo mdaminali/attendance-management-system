@@ -10,7 +10,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 const corsOptions = {
-	origin: "http://localhost:3000", // Replace with the frontend's origin
+	origin: "*", // Replace with the frontend's origin
 	methods: ["GET", "POST", "PUT", "DELETE"],
 	credentials: true, // Allow cookies and other credentials
 }
@@ -286,12 +286,12 @@ app.get("/api/codeWiseSchedule", (req, res) => {
 // Mobile apps related api
 
 app.post("/api/studentAdd", (req, res) => {
-	console.log(req)
+	// console.log(req)
 	const { name, userRoll, email, password } = req.body
 
 	const query = "INSERT INTO students ( name, userRoll, email, password) VALUES (?, ?, ?, ?)"
 	db.query(query, [name, userRoll, email, password], (err, result) => {
-		console.log(result)
+		console.log("result", result)
 		if (err) {
 			console.error("Database error:", err)
 			return res.status(500).json({ message: "Internal server error" })
@@ -303,6 +303,26 @@ app.post("/api/studentAdd", (req, res) => {
 		} else {
 			// User not found
 			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
+app.post("/api/studentLogin", (req, res) => {
+	const { email, password } = req.body
+
+	const query = "SELECT * FROM students WHERE email = ? AND password = ?"
+	db.query(query, [email, password], (err, result) => {
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result.length > 0) {
+			// Successful login
+			res.status(200).json({ message: "Login successful!", user: result[0] })
+		} else {
+			// User not found
+			res.status(404).json({ message: "User does not exist in the database." })
 		}
 	})
 })

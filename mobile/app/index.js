@@ -1,7 +1,24 @@
+import React, { useState, useEffect } from "react"
 import { Text, View, StyleSheet } from "react-native"
 import { Link } from "expo-router"
 
+import * as SecureStore from "expo-secure-store"
+import { useRouter } from "expo-router"
+
 export default function Index() {
+	const router = useRouter()
+	const [studenInfo, setStudentInfo] = useState()
+
+	// useEffect(async () => {
+	// 	let info = await SecureStore.getItemAsync("studentInfo")
+	// 	console.log("info", info)
+	// 	setStudentInfo(info)
+	// }, [])
+
+	// useEffect(async () => {
+	// 	if (studenInfo) router.push("/home")
+	// }, [studenInfo])
+
 	return (
 		<View style={styles.container}>
 			{/* Welcome Message */}

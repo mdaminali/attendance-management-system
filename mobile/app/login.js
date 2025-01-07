@@ -4,6 +4,10 @@ import { Link } from "expo-router"
 import { Formik } from "formik"
 import * as Yup from "yup"
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
+import axios from "axios"
+import { Toast } from "toastify-react-native"
+import * as SecureStore from "expo-secure-store"
+import { useRouter } from "expo-router"
 
 // Validation schema using Yup
 const validationSchema = Yup.object({
@@ -12,9 +16,27 @@ const validationSchema = Yup.object({
 })
 
 const Login = () => {
-	const handleLogin = (values) => {
-		// Simulate login action and show alert on successful login
-		Alert.alert("Login Successful", `Welcome back, ${values}`)
+	const router = useRouter()
+
+	const handleLogin = async (values) => {
+		console.log(values)
+		try {
+			const res = await axios.post("http://192.168.0.106:3001/api/studentLogin", values)
+			console.log("data", res?.data)
+			if (res?.data) {
+				Toast.success(res.data?.message)
+				await SecureStore.setItemAsync("studentInfo", JSON.stringify(res?.data?.user))
+				router.push("/home")
+			}
+
+			// setData(response.data)
+		} catch (err) {
+			console.log(err)
+			Toast.error(err?.message ? err?.message : "Something wrong")
+			// setError("Failed to fetch data")
+		} finally {
+			// setLoading(false)
+		}
 	}
 
 	return (
