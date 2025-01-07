@@ -15,10 +15,10 @@ const validationSchema = Yup.object().shape({
 })
 
 const Registration = () => {
-	const handleSubmit = async (values: any) => {
+	const handleSubmit = async (values) => {
 		console.log(values)
 		try {
-			const res = await axios.post("http://192.168.4.73:3001/api/studentAdd", values)
+			const res = await axios.post("http://192.168.0.106:3001/api/studentAdd", values)
 			console.log("data", res?.data)
 
 			// setData(response.data)

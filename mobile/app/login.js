@@ -12,9 +12,9 @@ const validationSchema = Yup.object({
 })
 
 const Login = () => {
-	const handleLogin = (values: { email: string; password: string }) => {
+	const handleLogin = (values) => {
 		// Simulate login action and show alert on successful login
-		Alert.alert("Login Successful", `Welcome back, ${values.email}`)
+		Alert.alert("Login Successful", `Welcome back, ${values}`)
 	}
 
 	return (

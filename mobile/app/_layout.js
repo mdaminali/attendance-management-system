@@ -4,7 +4,7 @@ import { View } from "react-native"
 
 export default function RootLayout() {
 	return (
-		<View>
+		<>
 			<ToastManager />
 
 			<Stack>
@@ -12,6 +12,6 @@ export default function RootLayout() {
 				<Stack.Screen name="registration" />
 				<Stack.Screen name="login" />
 			</Stack>
-		</View>
+		</>
 	)
 }
