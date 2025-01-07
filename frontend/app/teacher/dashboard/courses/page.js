@@ -61,8 +61,10 @@ const Courses = () => {
 	}
 
 	const getCourses = async () => {
+		// if (!teacherInfo) return toast.error("Please login first.")
+		if (!teacherInfo) return
 		try {
-			const res = await axios.get("http://localhost:3001/api/courses")
+			const res = await axios.get(`http://localhost:3001/api/teacherWiseCourses?email=${teacherInfo?.user}`)
 			console.log("Server response:", res)
 
 			if (res.data) {
@@ -88,11 +90,15 @@ const Courses = () => {
 			if (!storedTeacherInfo) {
 				redirect("/teacher/login")
 			} else {
-				getCourses()
+				// getCourses()
 				setTeacherInfo(JSON.parse(storedTeacherInfo))
 			}
 		}
 	}, [])
+
+	useEffect(() => {
+		getCourses()
+	}, [teacherInfo])
 
 	const toggleSidebar = () => {
 		setSidebarOpen(!sidebarOpen)

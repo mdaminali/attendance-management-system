@@ -5,6 +5,15 @@ import { redirect, usePathname, useSearchParams } from "next/navigation"
 import { toast } from "react-toastify"
 import axios from "axios"
 
+import { Radio } from "@material-tailwind/react"
+
+import moment from "moment"
+
+import DateTimePicker from "react-datetime-picker"
+import "react-datetime-picker/dist/DateTimePicker.css"
+import "react-calendar/dist/Calendar.css"
+import "react-clock/dist/Clock.css"
+
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react"
 
 import CustomLoader from "@/app/components/CustomLoader"
@@ -29,9 +38,18 @@ const Schedule = () => {
 	const [allSchedule, setAllSchedule] = useState()
 	const [teacherInfo, setTeacherInfo] = useState()
 
+	const [value, onChange] = useState(new Date())
+
+	console.log(value)
+	const formattedDate = moment(value, "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ").format("YYYY-MM-DD HH:mm:ss")
+
+	console.log(formattedDate)
+
 	const [activeButton, setActiveButton] = useState(null)
 
 	const [allCourses, setAllCourses] = useState()
+
+	const [schedule, setSchedule] = useState([{ datetime: new Date(), class_type: "offline" }])
 
 	console.log("allCourses", allCourses)
 
@@ -62,8 +80,37 @@ const Schedule = () => {
 		getCourses()
 	}, [teacherInfo])
 
-	const handleClick = (button) => {
-		setActiveButton(button) // Set the clicked button as active
+	const handleClick = async (button) => {
+		console.log(button)
+
+		setActiveButton(button)
+	}
+
+	useEffect(() => {
+		if (activeButton === null) return
+		getSchedule()
+	}, [activeButton])
+
+	const getSchedule = async () => {
+		try {
+			const res = await axios.get(`http://localhost:3001/api/codeWiseSchedule?code=${allCourses?.[activeButton]?.code}`)
+			console.log("Server response:", res)
+
+			if (res.data) {
+				setSchedule(res.data?.[0]?.classDetails && JSON.parse(res.data?.[0]?.classDetails))
+			} else {
+				toast.error(res.data?.message || "Unexpected response")
+			}
+		} catch (error) {
+			if (error.response) {
+				const errorMessage = error.response.data?.message || "An error occurred!"
+				toast.error(errorMessage)
+			} else if (error.request) {
+				toast.error("Server did not respond. Please try again later.")
+			} else {
+				toast.error("An unexpected error occurred.")
+			}
+		}
 	}
 
 	console.log(teacherInfo)
@@ -129,6 +176,27 @@ const Schedule = () => {
 			toast.success("Delete successfully!")
 			setDeleteItem(null)
 			// getSchedule()
+		}
+	}
+
+	const handleScheduleAdd = () => {
+		setSchedule((prevSchedule) => [...prevSchedule, { datetime: new Date(), class_type: "offline" }])
+	}
+
+	console.log(schedule)
+
+	const handleScheduleSubmit = async () => {
+		// console.log(allCourses?.[activeButton]?.code)
+
+		let data = {
+			code: allCourses?.[activeButton]?.code,
+			classDetails: JSON.stringify(schedule),
+		}
+
+		const res = await axios.post("http://localhost:3001/api/scheduleAdd", data)
+
+		if (res?.data) {
+			toast.success("Add successfully!")
 		}
 	}
 
@@ -199,6 +267,7 @@ const Schedule = () => {
 			{/* Main Content */}
 			<div className="flex-1 bg-gray-100 p-6 ml-0 md:ml-64 transition-all duration-300">
 				{/* Dashboard Content */}
+				<p className="mb-2">Click a course from below</p>
 
 				<div style={{ display: "flex", gap: "10px" }}>
 					{allCourses?.map((item, index) => (
@@ -207,7 +276,7 @@ const Schedule = () => {
 							onClick={() => handleClick(index)}
 							style={{
 								padding: "10px 20px",
-								backgroundColor: activeButton === index ? "#4CAF50" : "#f0f0f0",
+								backgroundColor: activeButton === index ? "#b1daff" : "#f0f0f0",
 								color: activeButton === index ? "green" : "black",
 								border: "1px solid #ccc",
 								borderRadius: "4px",
@@ -220,11 +289,8 @@ const Schedule = () => {
 
 				{activeButton !== null && (
 					<>
-						<div className="mb-6 flex justify-between items-center">
+						<div className="mt-5">
 							<h1 className="text-3xl font-semibold">Schedule</h1>
-							<button onClick={handleOpen} className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition">
-								Add
-							</button>
 						</div>
 
 						{loading ? (
@@ -232,91 +298,90 @@ const Schedule = () => {
 								<CustomLoader />
 							</div>
 						) : (
-							<div className="overflow-x-auto">
-								<table className="min-w-full table-auto border-collapse">
-									<thead className="bg-gray-200">
-										<tr>
-											<th className="px-4 py-2 text-left font-semibold">ID</th>
-											<th className="px-4 py-2 text-left font-semibold">Course code</th>
-											<th className="px-4 py-2 text-left font-semibold">Course title</th>
-											<th className="px-4 py-2 text-left font-semibold">Actions</th>
-										</tr>
-									</thead>
-									<tbody>
-										{allSchedule?.map((row) => (
-											<tr key={row.id} className="border-b">
-												<td className="px-4 py-2">{row.id}</td>
-												<td className="px-4 py-2">{row.code}</td>
-												<td className="px-4 py-2">{row.title}</td>
-												<td className="px-4 py-2 flex space-x-2">
-													{/* Edit Icon */}
-													{/* Correct Edit Icon (Pencil) */}
-													{/* <button onClick={() => handleEdit(row.id)} className="text-blue-600 w-4 hover:text-blue-800">
-											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-												<path
-													fill="#74C0FC"
-													d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152L0 424c0 48.6 39.4 88 88 88l272 0c48.6 0 88-39.4 88-88l0-112c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 112c0 22.1-17.9 40-40 40L88 464c-22.1 0-40-17.9-40-40l0-272c0-22.1 17.9-40 40-40l112 0c13.3 0 24-10.7 24-24s-10.7-24-24-24L88 64z"
+							<div className="space-y-4">
+								{schedule?.length > 0 &&
+									schedule.map((item, index) => (
+										<div key={index} className="flex items-center gap-6 px-4 py-2 bg-gray-50 shadow rounded-lg">
+											{/* Date and Time Section */}
+											<div className="w-1/2">
+												<p className="mb-2 text-sm font-semibold text-gray-700">Date and Time</p>
+												<DateTimePicker
+													onChange={(newDate) => {
+														// Update the datetime for the current item
+														const updatedSchedule = [...schedule]
+														updatedSchedule[index] = { ...updatedSchedule[index], datetime: newDate }
+														setSchedule(updatedSchedule)
+													}}
+													value={item.datetime}
 												/>
-											</svg>
-										</button> */}
-													{/* Delete Icon */}
-													<button onClick={() => setDeleteItem(row.id)} className="text-red-600 hover:text-red-800">
-														<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-														</svg>
-													</button>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
+											</div>
+
+											{/* Class Type Section */}
+											<div className="w-1/3">
+												<p className="mb-2 text-sm font-semibold text-gray-700">Class Type</p>
+												<div className="flex gap-6">
+													<label className="flex items-center gap-2">
+														<input
+															type="radio"
+															name={`type-${index}`} // Ensure unique name for each group
+															value="Offline"
+															checked={item.class_type === "Offline"}
+															onChange={() => {
+																const updatedSchedule = [...schedule]
+																updatedSchedule[index] = { ...updatedSchedule[index], class_type: "Offline" }
+																setSchedule(updatedSchedule)
+															}}
+														/>
+														<span className="text-sm text-gray-600">Offline</span>
+													</label>
+													<label className="flex items-center gap-2">
+														<input
+															type="radio"
+															name={`type-${index}`} // Ensure unique name for each group
+															value="Online"
+															checked={item.class_type === "Online"}
+															onChange={() => {
+																const updatedSchedule = [...schedule]
+																updatedSchedule[index] = { ...updatedSchedule[index], class_type: "Online" }
+																setSchedule(updatedSchedule)
+															}}
+														/>
+														<span className="text-sm text-gray-600">Online</span>
+													</label>
+												</div>
+											</div>
+
+											{/* Delete Button */}
+											<div className="w-auto">
+												<button
+													onClick={() => {
+														const updatedSchedule = schedule.filter((_, idx) => idx !== index)
+														setSchedule(updatedSchedule)
+													}}
+													className="text-red-600 hover:text-red-800 transition duration-200"
+													aria-label="Delete">
+													<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
+														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+													</svg>
+												</button>
+											</div>
+										</div>
+									))}
+
+								{/* Add Button */}
+								<div className="flex justify-between">
+									<button onClick={handleScheduleAdd} className="px-6 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg shadow hover:bg-blue-700 transition duration-200">
+										Add
+									</button>
+									<button onClick={handleScheduleSubmit} className="px-6 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow hover:bg-blue-700 transition duration-200">
+										Submit
+									</button>
+								</div>
 							</div>
 						)}
 					</>
 				)}
 			</div>
-			<Dialog open={open} handler={handleOpen}>
-				<DialogHeader>Add course</DialogHeader>
-				<DialogBody>
-					<div>
-						<label htmlFor="code" className="block text-sm font-medium text-gray-700">
-							Course Code
-						</label>
-						<input type="text" id="code" placeholder="Enter your code" className={`w-full px-4 py-2 mt-1 border ${errors.code ? "border-red-500" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`} {...register("code")} />
-						{errors.code && <p className="text-red-500 text-xs mt-1">{errors.code.message}</p>}
-					</div>
-
-					{/* Password Field */}
-					<div>
-						<label htmlFor="title" className="block text-sm font-medium text-gray-700">
-							Title
-						</label>
-						<input type="text" id="title" placeholder="Enter your title" className={`w-full px-4 py-2 mt-1 border ${errors.title ? "border-red-500" : "border-gray-300"} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`} {...register("title")} />
-						{errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
-					</div>
-				</DialogBody>
-				<DialogFooter>
-					<Button variant="text" color="red" onClick={handleOpen} className="mr-1">
-						<span>Cancel</span>
-					</Button>
-					<Button variant="gradient" color="green" onClick={handleSubmit(onSubmit)}>
-						<span>Submit</span>
-					</Button>
-				</DialogFooter>
-			</Dialog>
-
-			<Dialog open={deleteItem ? true : false} handler={() => setDeleteItem(deleteItem ? null : deleteItem)}>
-				<DialogHeader>Delete</DialogHeader>
-				<DialogBody>Are you sure you want to delete this item?</DialogBody>
-				<DialogFooter>
-					<Button variant="text" color="gray" onClick={() => setDeleteItem(null)} className="mr-1">
-						<span>Cancel</span>
-					</Button>
-					<Button variant="gradient" color="red" onClick={handleDeleteSubmit}>
-						<span>Submit</span>
-					</Button>
-				</DialogFooter>
-			</Dialog>
 		</div>
 	)
 }

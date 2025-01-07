@@ -235,6 +235,78 @@ app.get("/api/teacherWiseCourses", (req, res) => {
 	})
 })
 
+// Schedule route
+
+app.post("/api/scheduleAdd", (req, res) => {
+	const { code, classDetails } = req.body
+
+	if (!code || !classDetails) {
+		return res.status(400).json({ message: "All field are required!" })
+	}
+
+	const deletequery = "DELETE from schedule where code=?"
+	db.query(deletequery, [code], (err, result) => {
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+	})
+
+	const query = "INSERT INTO schedule ( code, classDetails) VALUES (?, ?)"
+	db.query(query, [code, classDetails], (err, result) => {
+		console.log(result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result?.insertId > 0) {
+			// Successful login
+			res.status(200).json({ message: "Add successfully!" })
+		} else {
+			// User not found
+			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
+app.get("/api/codeWiseSchedule", (req, res) => {
+	const { code } = req.query
+	const query = "SELECT * FROM schedule where code=?"
+
+	db.query(query, [code], (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch data" })
+		} else {
+			res.status(200).json(results)
+		}
+	})
+})
+
+// Mobile apps related api
+
+app.post("/api/studentAdd", (req, res) => {
+	console.log(req)
+	const { name, userRoll, email, password } = req.body
+
+	const query = "INSERT INTO students ( name, userRoll, email, password) VALUES (?, ?, ?, ?)"
+	db.query(query, [name, userRoll, email, password], (err, result) => {
+		console.log(result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result?.insertId > 0) {
+			// Successful login
+			res.status(200).json({ message: "Add successfully!" })
+		} else {
+			// User not found
+			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`)
