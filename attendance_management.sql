@@ -1,133 +1,100 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Jan 06, 2025 at 08:34 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+/*
+SQLyog Community v11.52 (64 bit)
+MySQL - 5.5.8 : Database - attendance_management
+*********************************************************************
+*/
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+/*!40101 SET NAMES utf8 */;
 
+/*!40101 SET SQL_MODE=''*/;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`attendance_management` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
---
--- Database: `attendance_management`
---
+USE `attendance_management`;
 
--- --------------------------------------------------------
+/*Table structure for table `admins` */
 
---
--- Table structure for table `courses`
---
+DROP TABLE IF EXISTS `admins`;
+
+CREATE TABLE `admins` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(20) DEFAULT NULL,
+  `password` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `admins` */
+
+insert  into `admins`(`id`,`email`,`password`) values (1,'admin@gmail.com','Admin@123');
+
+/*Table structure for table `courses` */
+
+DROP TABLE IF EXISTS `courses`;
 
 CREATE TABLE `courses` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `code` varchar(50) NOT NULL,
-  `title` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `title` varchar(255) NOT NULL,
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `courses`
---
+/*Data for the table `courses` */
 
-INSERT INTO `courses` (`id`, `email`, `code`, `title`) VALUES
-(3, 'user1@example.com', '123', 'test'),
-(4, 'user1@example.com', '455455', 'fdsfsfsff');
+insert  into `courses`(`id`,`email`,`code`,`title`) values (3,'user1@example.com','123','test'),(4,'user1@example.com','455455','fdsfsfsff'),(5,'teacher1@gmail.com','12345678','dsfsf'),(8,'teacher1@gmail.com','5454','dsfsf');
 
--- --------------------------------------------------------
+/*Table structure for table `schedule` */
 
---
--- Table structure for table `students`
---
+DROP TABLE IF EXISTS `schedule`;
+
+CREATE TABLE `schedule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(50) NOT NULL,
+  `classDetails` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+/*Data for the table `schedule` */
+
+insert  into `schedule`(`id`,`code`,`classDetails`) values (2,'12345678','[{\"datetime\":\"2025-01-07T06:29:51.782Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-07T06:29:53.828Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-07T06:29:55.732Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-07T06:29:56.740Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-07T07:04:52.707Z\",\"class_type\":\"Online\"}]');
+
+/*Table structure for table `students` */
+
+DROP TABLE IF EXISTS `students`;
 
 CREATE TABLE `students` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `age` int(11) NOT NULL,
-  `grade` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `userRoll` varchar(10) NOT NULL,
+  `email` varchar(20) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `students`
---
+/*Data for the table `students` */
 
-INSERT INTO `students` (`id`, `name`, `age`, `grade`) VALUES
-(1, 'John Doe', 18, '12th'),
-(2, 'Jane Doe', 17, '11th');
+insert  into `students`(`id`,`name`,`userRoll`,`email`,`password`) values (1,'John Doe','','18','12th'),(2,'Jane Doe','','17','11th'),(3,'Test','Tstsysg','amin.dpdc@gmail.com','Tegeheh'),(4,'Test','Tstsysg','amin.dpdc@gmail.com','Tegeheh'),(5,'Fff','Frr','amin.dpdc@gmail.com','Fffffff');
 
--- --------------------------------------------------------
+/*Table structure for table `teachers` */
 
---
--- Table structure for table `teachers`
---
+DROP TABLE IF EXISTS `teachers`;
 
 CREATE TABLE `teachers` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
-  `password` varchar(32) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `password` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `teachers`
---
+/*Data for the table `teachers` */
 
-INSERT INTO `teachers` (`id`, `email`, `password`) VALUES
-(2, 'user2@example.com', 'f925916e2754e5e03f75dd58a5733251'),
-(3, 'user3@example.com', 'f925916e2754e5e03f75dd58a5733251');
+insert  into `teachers`(`id`,`email`,`password`) values (12,'teacher1@gmail.com','teacher1');
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `courses`
---
-ALTER TABLE `courses`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `students`
---
-ALTER TABLE `students`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `teachers`
---
-ALTER TABLE `teachers`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `courses`
---
-ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `students`
---
-ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `teachers`
---
-ALTER TABLE `teachers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
