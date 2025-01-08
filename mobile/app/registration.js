@@ -7,6 +7,8 @@ import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import axios from "axios"
 import { Toast } from "toastify-react-native"
 
+import { useRouter } from "expo-router"
+
 // Validation Schema
 const validationSchema = Yup.object().shape({
 	name: Yup.string().required("Name is required"),
@@ -16,13 +18,16 @@ const validationSchema = Yup.object().shape({
 })
 
 const Registration = () => {
+	const router = useRouter()
+
 	const handleSubmit = async (values) => {
 		console.log(values)
 		try {
-			const res = await axios.post("http://192.168.0.106:3001/api/studentAdd", values)
+			const res = await axios.post("http://192.168.4.111:3001/api/studentAdd", values)
 			console.log("data", res?.data)
 			if (res?.data) {
 				Toast.success(res.data?.message)
+				router.push("/login")
 			}
 
 			// setData(response.data)

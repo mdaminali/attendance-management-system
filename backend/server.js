@@ -327,6 +327,19 @@ app.post("/api/studentLogin", (req, res) => {
 	})
 })
 
+app.get("/api/allCourses", (req, res) => {
+	const { code } = req.query
+	const query = "SELECT * FROM courses"
+
+	db.query(query, (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch data" })
+		} else {
+			res.status(200).json(results)
+		}
+	})
+})
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`)

@@ -96,10 +96,8 @@ const Schedule = () => {
 			const res = await axios.get(`http://localhost:3001/api/codeWiseSchedule?code=${allCourses?.[activeButton]?.code}`)
 			console.log("Server response:", res)
 
-			if (res.data) {
+			if (res.data?.length > 0) {
 				setSchedule(res.data?.[0]?.classDetails && JSON.parse(res.data?.[0]?.classDetails))
-			} else {
-				toast.error(res.data?.message || "Unexpected response")
 			}
 		} catch (error) {
 			if (error.response) {

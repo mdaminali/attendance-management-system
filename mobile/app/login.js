@@ -21,7 +21,7 @@ const Login = () => {
 	const handleLogin = async (values) => {
 		console.log(values)
 		try {
-			const res = await axios.post("http://192.168.0.106:3001/api/studentLogin", values)
+			const res = await axios.post("http://192.168.4.111:3001/api/studentLogin", values)
 			console.log("data", res?.data)
 			if (res?.data) {
 				Toast.success(res.data?.message)
