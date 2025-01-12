@@ -9,6 +9,8 @@ import { Toast } from "toastify-react-native"
 import * as SecureStore from "expo-secure-store"
 import { useRouter } from "expo-router"
 
+import * as Application from "expo-application"
+
 // Validation schema using Yup
 const validationSchema = Yup.object({
 	email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -19,9 +21,18 @@ const Login = () => {
 	const router = useRouter()
 
 	const handleLogin = async (values) => {
-		console.log(values)
+		let data = values
+
+		const androidId = Application.getAndroidId()
+
+		if (androidId) {
+			data.androidId = androidId
+		}
+
+		console.log(data)
+
 		try {
-			const res = await axios.post("http://192.168.4.111:3001/api/studentLogin", values)
+			const res = await axios.post("http://192.168.4.73:3001/api/studentLogin", data)
 			console.log("data", res?.data)
 			if (res?.data) {
 				Toast.success(res.data?.message)
@@ -31,9 +42,12 @@ const Login = () => {
 
 			// setData(response.data)
 		} catch (err) {
-			console.log(err)
-			Toast.error(err?.message ? err?.message : "Something wrong")
-			// setError("Failed to fetch data")
+			if (err.response && err.response.data && err.response.data.message) {
+				Toast.error(err.response.data.message)
+			} else {
+				console.log(err?.message)
+				Toast.error(err?.message || "An unknown error occurred.")
+			}
 		} finally {
 			// setLoading(false)
 		}

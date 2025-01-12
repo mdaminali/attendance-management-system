@@ -72,12 +72,13 @@ CREATE TABLE `students` (
   `userRoll` varchar(10) NOT NULL,
   `email` varchar(20) NOT NULL,
   `password` varchar(50) NOT NULL,
+  `androidId` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `students` */
 
-insert  into `students`(`id`,`name`,`userRoll`,`email`,`password`) values (1,'John Doe','','18','12th'),(2,'Jane Doe','','17','11th'),(3,'Test','Tstsysg','amin.dpdc@gmail.com','Tegeheh'),(4,'Test','Tstsysg','amin.dpdc@gmail.com','Tegeheh'),(5,'Fff','Frr','amin.dpdc@gmail.com','Fffffff');
+insert  into `students`(`id`,`name`,`userRoll`,`email`,`password`,`androidId`) values (1,'John Doe','','18','12th','1588b459af21329b'),(2,'Jane Doe','','17','11th',''),(3,'Test','Tstsysg','amin.dpdc@gmail.com','Tegeheh',''),(4,'Test','Tstsysg','amin.dpdc@gmail.com','Tegeheh',''),(5,'Fff','Frr','amin.dpdc@gmail.com','Fffffff',''),(7,'Amin','1111111','amin.dpdc@gmail.com','Test@1','1588b459af21329b');
 
 /*Table structure for table `teachers` */
 

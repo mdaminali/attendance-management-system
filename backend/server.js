@@ -287,10 +287,10 @@ app.get("/api/codeWiseSchedule", (req, res) => {
 
 app.post("/api/studentAdd", (req, res) => {
 	// console.log(req)
-	const { name, userRoll, email, password } = req.body
+	const { name, userRoll, email, password, androidId } = req.body
 
-	const query = "INSERT INTO students ( name, userRoll, email, password) VALUES (?, ?, ?, ?)"
-	db.query(query, [name, userRoll, email, password], (err, result) => {
+	const query = "INSERT INTO students ( name, userRoll, email, password, androidId) VALUES (?, ?, ?, ?, ?)"
+	db.query(query, [name, userRoll, email, password, androidId], (err, result) => {
 		console.log("result", result)
 		if (err) {
 			console.error("Database error:", err)
@@ -308,10 +308,10 @@ app.post("/api/studentAdd", (req, res) => {
 })
 
 app.post("/api/studentLogin", (req, res) => {
-	const { email, password } = req.body
+	const { email, password, androidId } = req.body
 
-	const query = "SELECT * FROM students WHERE email = ? AND password = ?"
-	db.query(query, [email, password], (err, result) => {
+	const query = "SELECT * FROM students WHERE email = ? AND password = ? AND androidId = ?"
+	db.query(query, [email, password, androidId], (err, result) => {
 		if (err) {
 			console.error("Database error:", err)
 			return res.status(500).json({ message: "Internal server error" })
@@ -322,7 +322,7 @@ app.post("/api/studentLogin", (req, res) => {
 			res.status(200).json({ message: "Login successful!", user: result[0] })
 		} else {
 			// User not found
-			res.status(404).json({ message: "User does not exist in the database." })
+			res.status(404).json({ message: "User does not exist in the database. You must need to login with registed device." })
 		}
 	})
 })

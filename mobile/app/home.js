@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react"
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 
-import * as LocalAuthentication from "expo-local-authentication"
-
 import * as SecureStore from "expo-secure-store"
 import { useRouter } from "expo-router"
 import axios from "axios"
+import Attendance from "./components/Attendance"
 
 const Home = () => {
 	const router = useRouter()
@@ -38,40 +37,9 @@ const Home = () => {
 		getCourses()
 	}, [])
 
-	const registerFingerprint = async () => {
-		try {
-			const hasHardware = await LocalAuthentication.hasHardwareAsync()
-			if (!hasHardware) {
-				Alert.alert("Error", "Device does not support fingerprint scanning")
-				return
-			}
-
-			const biometricTypes = await LocalAuthentication.supportedAuthenticationTypesAsync()
-			if (!biometricTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
-				Alert.alert("Error", "Fingerprint not supported")
-				return
-			}
-
-			const result = await LocalAuthentication.authenticateAsync({
-				promptMessage: "Scan your fingerprint to register",
-			})
-			console.log(result)
-
-			if (result.success) {
-				Alert.alert("Success", "Fingerprint registered successfully!")
-				// Send data to the server
-				// console.log({ name, id, fingerData: uniqueCode })
-			} else {
-				Alert.alert("Error", "Fingerprint registration failed")
-			}
-		} catch (error) {
-			console.error(error)
-		}
-	}
-
 	const getCourses = async () => {
 		try {
-			const res = await axios.get(`http://192.168.4.111:3001/api/allCourses`)
+			const res = await axios.get(`http://192.168.4.73:3001/api/allCourses`)
 			console.log("Server response:", res)
 
 			if (res.data) {
@@ -156,15 +124,7 @@ const Home = () => {
 				</View>
 			)}
 
-			{currentMenu === "Attendance" && (
-				<View style={{ padding: 20 }}>
-					<Text style={styles.title}>Submit your todays attendance</Text>
-
-					<TouchableOpacity style={styles.submitButton} onPress={registerFingerprint}>
-						<Text style={styles.submitButtonText}>Submit</Text>
-					</TouchableOpacity>
-				</View>
-			)}
+			{currentMenu === "Attendance" && <Attendance />}
 
 			{/* Sidebar Menu */}
 			{menuVisible && (
