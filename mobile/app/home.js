@@ -6,32 +6,42 @@ import * as SecureStore from "expo-secure-store"
 import { useRouter } from "expo-router"
 import axios from "axios"
 import Attendance from "./components/Attendance"
+import AddCourse from "./components/AddCourse"
 
 const Home = () => {
 	const router = useRouter()
-	// State for menu visibility
+
+	const [studentInfo, setStudentInfo] = useState()
 	const [menuVisible, setMenuVisible] = useState(false)
 	const [currentMenu, setCurrentMenu] = useState("Home")
 	const [courses, setCourses] = useState()
 
-	// Menu items
 	const menuItems = [{ key: "Home" }, { key: "Add course" }, { key: "Attendance" }, { key: "Notice" }]
 
-	// Toggle menu visibility
 	const toggleMenu = () => setMenuVisible(!menuVisible)
 
-	// Logout handler
 	const handleLogout = async () => {
 		await SecureStore.deleteItemAsync("studentInfo")
 		router.push("/login")
 	}
 
+	const getStudentInfo = async () => {
+		let info = await SecureStore.getItemAsync("studentInfo")
+		setStudentInfo(info)
+	}
+
+	useEffect(() => {
+		// getStudentInfo()
+	}, [])
+
+	// useEffect(async () => {
+	// 	if (!studentInfo) router.push("/home")
+	// }, [studentInfo])
+
 	const handleMenuChange = (menu) => {
 		setCurrentMenu(menu)
 		toggleMenu()
 	}
-
-	const [selectedItems, setSelectedItems] = useState([])
 
 	useEffect(() => {
 		getCourses()
@@ -58,35 +68,6 @@ const Home = () => {
 		}
 	}
 
-	const toggleSelection = (code) => {
-		if (selectedItems.includes(code)) {
-			setSelectedItems(selectedItems.filter((item) => item !== code))
-		} else {
-			setSelectedItems([...selectedItems, code])
-		}
-	}
-
-	const handleSubmit = () => {
-		if (selectedItems.length === 0) {
-			console.log("No Selection", "Please select at least one item.")
-		} else {
-			const selectedTitles = courses
-				.filter((item) => selectedItems.includes(item.code))
-				.map((item) => item.code)
-				.join(", ")
-			console.log("Selected Items", selectedTitles)
-		}
-	}
-
-	const renderItem = ({ item }) => (
-		<TouchableOpacity style={styles.checkboxContainer} onPress={() => toggleSelection(item.code)}>
-			<View style={styles.checkbox}>{selectedItems.includes(item.code) && <View style={styles.checked} />}</View>
-			<Text style={styles.label}>
-				{item.code}: {item.title}
-			</Text>
-		</TouchableOpacity>
-	)
-
 	return (
 		<View style={styles.container}>
 			{/* Header Section */}
@@ -112,17 +93,7 @@ const Home = () => {
 				</View>
 			)}
 
-			{currentMenu === "Add course" && (
-				<View style={{ padding: 20 }}>
-					<Text style={styles.title}>Select Your Courses</Text>
-
-					<FlatList data={courses} keyExtractor={(item) => item.id.toString()} renderItem={renderItem} />
-
-					<TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-						<Text style={styles.submitButtonText}>Submit</Text>
-					</TouchableOpacity>
-				</View>
-			)}
+			{currentMenu === "Add course" && <AddCourse courses={courses} />}
 
 			{currentMenu === "Attendance" && <Attendance />}
 
