@@ -236,7 +236,6 @@ app.get("/api/teacherWiseCourses", (req, res) => {
 })
 
 // Schedule route
-
 app.post("/api/scheduleAdd", (req, res) => {
 	const { code, classDetails } = req.body
 
@@ -283,8 +282,21 @@ app.get("/api/codeWiseSchedule", (req, res) => {
 	})
 })
 
-// Mobile apps related api
+//attendance route
+app.get("/api/attendance", (req, res) => {
+	const { course_code } = req.query
+	const query = "SELECT a.*, b.* FROM attendance a INNER JOIN students b ON a.student_email=b.email WHERE a.course_code=?"
 
+	db.query(query, [course_code], (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch" })
+		} else {
+			res.status(200).json(results)
+		}
+	})
+})
+
+// Mobile apps related api
 app.post("/api/studentAdd", (req, res) => {
 	// console.log(req)
 	const { name, userRoll, email, password, androidId } = req.body

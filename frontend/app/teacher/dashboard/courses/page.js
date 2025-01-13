@@ -171,8 +171,8 @@ const Courses = () => {
 							</Link>
 						</li>
 						<li>
-							<Link href="/teacher/dashboard/attendace" className="block px-4 py-2 hover:bg-gray-700">
-								Attendace
+							<Link href="/teacher/dashboard/attendance" className="block px-4 py-2 hover:bg-gray-700">
+								Attendance
 							</Link>
 						</li>
 					</ul>
