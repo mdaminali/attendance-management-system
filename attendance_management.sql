@@ -73,11 +73,11 @@ CREATE TABLE `schedule` (
   `code` varchar(50) NOT NULL,
   `classDetails` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 /*Data for the table `schedule` */
 
-insert  into `schedule`(`id`,`code`,`classDetails`) values (2,'12345678','[{\"datetime\":\"2025-01-07T06:29:51.782Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-08T06:29:53.828Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-09T06:29:55.732Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-15T06:29:56.740Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-20T07:04:52.707Z\",\"class_type\":\"Online\"}]'),(3,'5454','[{\"datetime\":\"2025-01-07T06:29:53.828Z\",\"class_type\":\"Online\"}]');
+insert  into `schedule`(`id`,`code`,`classDetails`) values (3,'5454','[{\"datetime\":\"2025-01-07T06:29:53.828Z\",\"class_type\":\"Online\"}]'),(5,'12345678','[{\"datetime\":\"2025-01-07T06:29:51.782Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-08T06:29:53.828Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-14T10:00:00.000Z\",\"class_type\":\"Offline\"},{\"datetime\":\"2025-01-15T06:29:56.740Z\",\"class_type\":\"Online\"},{\"datetime\":\"2025-01-20T07:04:52.707Z\",\"class_type\":\"Online\"}]');
 
 /*Table structure for table `students` */
 
@@ -96,7 +96,7 @@ CREATE TABLE `students` (
 
 /*Data for the table `students` */
 
-insert  into `students`(`id`,`name`,`userRoll`,`email`,`password`,`androidId`,`courses`) values (1,'John Doe','','18','12th','1588b459af21329b',NULL),(2,'Jane Doe','222','amin2@gmail.com','Test@2','1588b459af21329b',NULL),(7,'Amin','111','amin1@gmail.com','Test@1','1588b459af21329b',NULL);
+insert  into `students`(`id`,`name`,`userRoll`,`email`,`password`,`androidId`,`courses`) values (1,'John Doe','','18','12th','1588b459af21329b',NULL),(2,'Jane Doe','222','amin2@gmail.com','Test@2','1588b459af21329b',NULL),(7,'Amin','111','amin1@gmail.com','Test@1','1588b459af21329b','12345678, 5454, 123');
 
 /*Table structure for table `teachers` */
 
@@ -107,7 +107,7 @@ CREATE TABLE `teachers` (
   `email` varchar(100) NOT NULL,
   `password` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `teachers` */
 
