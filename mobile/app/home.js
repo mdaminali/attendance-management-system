@@ -8,7 +8,7 @@ import axios from "axios"
 import Attendance from "./components/Attendance"
 import AddCourse from "./components/AddCourse"
 
-const Home = () => {
+export default function Home() {
 	const router = useRouter()
 
 	const [studentInfo, setStudentInfo] = useState()
@@ -33,8 +33,6 @@ const Home = () => {
 	useEffect(() => {
 		getStudentInfo()
 	}, [])
-
-	// console.log("sutdent info", studentInfo)
 
 	// useEffect(async () => {
 	// 	if (!studentInfo) router.push("/home")
@@ -72,18 +70,15 @@ const Home = () => {
 
 	return (
 		<View style={styles.container}>
-			{/* Header Section */}
 			<View style={styles.header}>
 				<View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
 					<TouchableOpacity onPress={toggleMenu}>
 						<Ionicons name="menu" size={30} color="#fff" />
 					</TouchableOpacity>
 
-					{/* App Name */}
 					<Text style={{ color: "white", fontSize: 20 }}>AttendEase</Text>
 				</View>
 
-				{/* Logout Button */}
 				<TouchableOpacity onPress={handleLogout}>
 					<Text style={styles.logout}>Logout</Text>
 				</TouchableOpacity>
@@ -97,17 +92,14 @@ const Home = () => {
 
 			{currentMenu === "Add course" && <AddCourse courses={courses} studentInfo={studentInfo} setStudentInfo={setStudentInfo} />}
 
-			{currentMenu === "Attendance" && <Attendance />}
+			{currentMenu === "Attendance" && <Attendance courses={courses} studentInfo={studentInfo} setStudentInfo={setStudentInfo} />}
 
-			{/* Sidebar Menu */}
 			{menuVisible && (
 				<View style={styles.sidebar}>
-					{/* Close Icon */}
 					<TouchableOpacity style={styles.closeIcon} onPress={toggleMenu}>
 						<Ionicons name="close" size={30} color="#000" />
 					</TouchableOpacity>
 
-					{/* Menu Items */}
 					<FlatList
 						data={menuItems}
 						renderItem={({ item }) => (
@@ -206,5 +198,3 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 	},
 })
-
-export default Home
