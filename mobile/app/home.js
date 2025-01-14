@@ -27,12 +27,14 @@ const Home = () => {
 
 	const getStudentInfo = async () => {
 		let info = await SecureStore.getItemAsync("studentInfo")
-		setStudentInfo(info)
+		info && setStudentInfo(JSON.parse(info))
 	}
 
 	useEffect(() => {
-		// getStudentInfo()
+		getStudentInfo()
 	}, [])
+
+	// console.log("sutdent info", studentInfo)
 
 	// useEffect(async () => {
 	// 	if (!studentInfo) router.push("/home")
@@ -93,7 +95,7 @@ const Home = () => {
 				</View>
 			)}
 
-			{currentMenu === "Add course" && <AddCourse courses={courses} />}
+			{currentMenu === "Add course" && <AddCourse courses={courses} studentInfo={studentInfo} setStudentInfo={setStudentInfo} />}
 
 			{currentMenu === "Attendance" && <Attendance />}
 
@@ -190,30 +192,7 @@ const styles = StyleSheet.create({
 		color: "#333",
 		textAlign: "center",
 	},
-	checkboxContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginBottom: 10,
-	},
-	checkbox: {
-		width: 20,
-		height: 20,
-		borderWidth: 2,
-		borderColor: "#007AFF",
-		borderRadius: 3,
-		marginRight: 10,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	checked: {
-		width: 12,
-		height: 12,
-		backgroundColor: "#007AFF",
-	},
-	label: {
-		fontSize: 16,
-		color: "#333",
-	},
+
 	submitButton: {
 		marginTop: 20,
 		backgroundColor: "#007AFF",

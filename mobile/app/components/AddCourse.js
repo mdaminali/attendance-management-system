@@ -5,8 +5,9 @@ import { Ionicons } from "@expo/vector-icons"
 import * as SecureStore from "expo-secure-store"
 import { useRouter } from "expo-router"
 import axios from "axios"
+import { Toast } from "toastify-react-native"
 
-export default function AddCourse({ courses }) {
+export default function AddCourse({ courses, studentInfo, setStudentInfo }) {
 	const [selectedItems, setSelectedItems] = useState([])
 
 	const toggleSelection = (code) => {
@@ -17,17 +18,58 @@ export default function AddCourse({ courses }) {
 		}
 	}
 
-	const handleSubmit = () => {
+	useEffect(() => {
+		// console.log("studentInfo", studentInfo)
+		if (!studentInfo) return
+		let courses = studentInfo?.courses
+		if (courses) {
+			const data = courses.split(", ").map((course) => course.trim())
+			setSelectedItems(data)
+		}
+	}, [studentInfo])
+
+	console.log(selectedItems)
+
+	const handleSubmit = async () => {
 		if (selectedItems.length === 0) {
-			console.log("No Selection", "Please select at least one item.")
+			Toast.error("No Selection. Please select at least one item.")
 		} else {
-			const selectedTitles = courses
-				.filter((item) => selectedItems.includes(item.code))
-				.map((item) => item.code)
-				.join(", ")
-			console.log("Selected Items", selectedTitles)
+			// const selectedTitles = courses
+			// 	.filter((item) => selectedItems.includes(item.code))
+			// 	.map((item) => item.code)
+			// 	.join(", ")
+
+			// console.log("Selected Items", selectedTitles)
+
+			let data = {
+				courses: selectedItems.join(", "),
+				id: studentInfo?.id,
+			}
+
+			try {
+				const res = await axios.post("http://192.168.4.73:3001/api/addCourseByStudent", data)
+				// console.log("data", res?.data)
+				if (res?.data) {
+					Toast.success(res.data?.message)
+					let updateData = studentInfo
+					updateData.courses = data.courses
+					setStudentInfo(updateData)
+
+					// await SecureStore.setItemAsync("studentInfo", JSON.stringify(res?.data?.user))
+				}
+
+				// setData(response.data)
+			} catch (err) {
+				console.log(err)
+				Toast.error(err?.message ? err?.message : "Something wrong")
+				// setError("Failed to fetch data")
+			} finally {
+				// setLoading(false)
+			}
 		}
 	}
+
+	// console.log("object", studentInfo)
 
 	const renderItem = ({ item }) => (
 		<TouchableOpacity style={styles.checkboxContainer} onPress={() => toggleSelection(item.code)}>
@@ -51,6 +93,30 @@ export default function AddCourse({ courses }) {
 }
 
 const styles = StyleSheet.create({
+	checkboxContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginBottom: 10,
+	},
+	checkbox: {
+		width: 20,
+		height: 20,
+		borderWidth: 2,
+		borderColor: "#007AFF",
+		borderRadius: 3,
+		marginRight: 10,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	checked: {
+		width: 12,
+		height: 12,
+		backgroundColor: "#007AFF",
+	},
+	label: {
+		fontSize: 16,
+		color: "#333",
+	},
 	title: {
 		fontSize: 24,
 		fontWeight: "bold",

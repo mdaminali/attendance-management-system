@@ -352,6 +352,27 @@ app.get("/api/allCourses", (req, res) => {
 	})
 })
 
+app.post("/api/addCourseByStudent", (req, res) => {
+	const { courses, id } = req.body
+
+	const query = "UPDATE students SET courses=? WHERE id = ?"
+	db.query(query, [courses, id], (err, result) => {
+		console.log(result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result.affectedRows > 0) {
+			// Successful login
+			res.status(200).json({ message: "Successful!", user: result[0] })
+		} else {
+			// User not found
+			res.status(404).json({ message: "Something wrong." })
+		}
+	})
+})
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`)
