@@ -37,12 +37,42 @@ db.connect((err) => {
 })
 
 // Create a GET route to fetch all students
-app.get("/students", (req, res) => {
+app.get("/api/students", (req, res) => {
 	const query = "SELECT * FROM students"
 
 	db.query(query, (err, results) => {
 		if (err) {
 			res.status(500).json({ error: "Failed to fetch students" })
+		} else {
+			res.status(200).json(results)
+		}
+	})
+})
+
+app.get("/api/teachers", (req, res) => {
+	const query = "SELECT * FROM teachers"
+
+	db.query(query, (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch teachers" })
+		} else {
+			res.status(200).json(results)
+		}
+	})
+})
+
+app.get("/api/attendances", (req, res) => {
+	const today = new Date()
+	const day = String(today.getDate()).padStart(2, "0")
+	const month = String(today.getMonth() + 1).padStart(2, "0")
+	const year = today.getFullYear()
+	const datetime = `${day}-${month}-${year}`
+
+	const query = "SELECT * FROM attendance WHERE datetime= ?"
+
+	db.query(query, [datetime], (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch attendances" })
 		} else {
 			res.status(200).json(results)
 		}
@@ -391,6 +421,19 @@ app.post("/api/attendanceSubmit", (req, res) => {
 		} else {
 			// User not found
 			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
+app.get("/api/studentAndCodeWiseAttendance", (req, res) => {
+	const { student_email, course_code, datetime } = req.query
+	const query = "SELECT * FROM attendance where student_email = ? and course_code = ? and datetime = ?"
+
+	db.query(query, [student_email, course_code, datetime], (err, results) => {
+		if (err) {
+			res.status(500).json({ error: "Failed to fetch data" })
+		} else {
+			res.status(200).json(results)
 		}
 	})
 })

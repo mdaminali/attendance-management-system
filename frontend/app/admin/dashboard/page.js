@@ -12,15 +12,45 @@ import * as yup from "yup"
 const Dashboard = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(false)
 	// const [redirectToLogin, setRedirectToLogin] = useState(false)
+	const [students, setStudents] = useState()
+	const [teachers, setTeachers] = useState()
+	const [attendances, setAttendances] = useState()
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			const storedAdminInfo = localStorage.getItem("adminInfo")
-			if (!storedAdminInfo) {
-				redirect("/admin/login")
-			}
+			if (!storedAdminInfo) return redirect("/admin/login")
+			getAllStudents()
 		}
 	}, [])
+
+	const getAllStudents = async () => {
+		try {
+			const res = await axios.get(`http://localhost:3001/api/students`)
+			const teacherRes = await axios.get(`http://localhost:3001/api/teachers`)
+			const attendancesRes = await axios.get(`http://localhost:3001/api/attendances`)
+
+			if (res.data?.length > 0) {
+				setStudents(res.data)
+			}
+			if (teacherRes.data?.length > 0) {
+				setTeachers(teacherRes.data)
+			}
+
+			if (attendancesRes.data?.length > 0) {
+				setAttendances(attendancesRes.data)
+			}
+		} catch (error) {
+			if (error.response) {
+				const errorMessage = error.response.data?.message || "An error occurred!"
+				toast.error(errorMessage)
+			} else if (error.request) {
+				toast.error("Server did not respond. Please try again later.")
+			} else {
+				toast.error("An unexpected error occurred.")
+			}
+		}
+	}
 
 	const toggleSidebar = () => {
 		setSidebarOpen(!sidebarOpen)
@@ -102,17 +132,17 @@ const Dashboard = () => {
 					{/* Card 1 */}
 					<div className="bg-white p-6 rounded-lg shadow-md">
 						<h2 className="text-xl font-semibold">Total Students</h2>
-						<p className="text-4xl font-bold mt-2">200</p>
+						<p className="text-4xl font-bold mt-2">{students?.length}</p>
 					</div>
 					{/* Card 2 */}
 					<div className="bg-white p-6 rounded-lg shadow-md">
 						<h2 className="text-xl font-semibold">Total Teachers</h2>
-						<p className="text-4xl font-bold mt-2">24</p>
+						<p className="text-4xl font-bold mt-2">{teachers?.length}</p>
 					</div>
 					{/* Card 3 */}
 					<div className="bg-white p-6 rounded-lg shadow-md">
 						<h2 className="text-xl font-semibold">Today total present</h2>
-						<p className="text-4xl font-bold mt-2">160</p>
+						<p className="text-4xl font-bold mt-2">{attendances?.length}</p>
 					</div>
 				</div>
 			</div>

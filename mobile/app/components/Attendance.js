@@ -11,11 +11,14 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 	const [location, setLocation] = useState(null)
 	const [activeButton, setActiveButton] = useState(null)
 	const [schedules, setSchedules] = useState(null)
+	const [todayAttendance, setTodayAttendance] = useState(null)
+
+	console.log("todayAttendance", todayAttendance)
 
 	const buetLatLong = {
 		latitude: 23.726684,
 		longitude: 90.388742,
-		acceptDistance: 10.5,
+		acceptDistance: 0.5,
 	}
 
 	useEffect(() => {
@@ -31,11 +34,12 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 		})()
 	}, [])
 
-	console.log(location)
+	// console.log(location)
 
 	useEffect(() => {
 		if (!activeButton) return
 		getSchedule()
+		getAttendance()
 	}, [activeButton])
 
 	const getSchedule = async () => {
@@ -46,6 +50,21 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 				setSchedules(res.data)
 			} else {
 				Toast.error(res.data?.message || "Unexpected response")
+			}
+		} catch (err) {
+			Toast.error(err?.message ? err?.message : "Something went wrong")
+		}
+	}
+
+	const getAttendance = async () => {
+		try {
+			const todayDate = moment().format("DD-MM-YYYY")
+			const res = await axios.get(`http://192.168.4.73:3001/api/studentAndCodeWiseAttendance?student_email=${studentInfo?.email}&course_code=${activeButton}&datetime=${todayDate}`)
+
+			if (res?.data?.length > 0) {
+				setTodayAttendance(res.data)
+			} else {
+				setTodayAttendance(null)
 			}
 		} catch (err) {
 			Toast.error(err?.message ? err?.message : "Something went wrong")
@@ -88,7 +107,7 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 			}
 
 			const result = await LocalAuthentication.authenticateAsync({
-				promptMessage: "Scan your fingerprint to register",
+				promptMessage: "Scan your fingerprint to submit attendance",
 			})
 
 			if (result.success) {
@@ -103,6 +122,7 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 					const res = await axios.post("http://192.168.4.73:3001/api/attendanceSubmit", data)
 					if (res?.data) {
 						Toast.success(res.data?.message)
+						getAttendance()
 					}
 				} catch (err) {
 					Toast.error(err?.message ? err?.message : "Something wrong")
@@ -128,15 +148,26 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 				))}
 			</View>
 
-			{activeButton !== null && classInProgress && (
-				<View style={{ padding: 20 }}>
-					<Text style={styles.title}>Submit your today's attendance</Text>
+			{activeButton !== null &&
+				classInProgress &&
+				(todayAttendance?.length > 0 ? (
+					<View>
+						<Text style={{ fontWeight: "bold", textAlign: "center", fontSize: 20, marginTop: 20 }}>Submittion done.</Text>
+						<Text style={styles.title2}>The attendance submissions for today's session of this course have already been completed.</Text>
 
-					<TouchableOpacity style={styles.submitButton} onPress={registerFingerprint}>
-						<Text style={styles.submitButtonText}>Submit</Text>
-					</TouchableOpacity>
-				</View>
-			)}
+						<Text style={styles.message}>
+							Your next class is on <Text style={{ fontWeight: "bold" }}>{moment(nextClass.datetime).format("dddd, MMMM Do YYYY, h:mm A")}</Text>.
+						</Text>
+					</View>
+				) : (
+					<View style={{ padding: 20 }}>
+						<Text style={styles.title}>Submit your today's attendance</Text>
+
+						<TouchableOpacity style={styles.submitButton} onPress={registerFingerprint}>
+							<Text style={styles.submitButtonText}>Submit</Text>
+						</TouchableOpacity>
+					</View>
+				))}
 
 			{activeButton !== null && !classInProgress && (
 				<View style={{ padding: 20 }}>
@@ -183,6 +214,14 @@ const styles = StyleSheet.create({
 		color: "#333",
 		textAlign: "center",
 	},
+	title2: {
+		fontSize: 16,
+		fontWeight: "400",
+		marginBottom: 20,
+		color: "#333",
+		textAlign: "center",
+		padding: 10,
+	},
 	submitButton: {
 		marginTop: 20,
 		backgroundColor: "#007AFF",
@@ -199,5 +238,6 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginVertical: 10,
 		textAlign: "center",
+		padding: 10,
 	},
 })
