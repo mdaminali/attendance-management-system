@@ -373,6 +373,28 @@ app.post("/api/addCourseByStudent", (req, res) => {
 	})
 })
 
+app.post("/api/attendanceSubmit", (req, res) => {
+	// console.log(req)
+	const { student_email, course_code, present_status, datetime } = req.body
+
+	const query = "INSERT INTO attendance ( student_email, course_code, present_status, datetime) VALUES (?, ?, ?, ?)"
+	db.query(query, [student_email, course_code, present_status, datetime], (err, result) => {
+		console.log("result", result)
+		if (err) {
+			console.error("Database error:", err)
+			return res.status(500).json({ message: "Internal server error" })
+		}
+
+		if (result?.insertId > 0) {
+			// Successful login
+			res.status(200).json({ message: "Successfull!" })
+		} else {
+			// User not found
+			res.status(404).json({ message: "Something wrong. Please try again." })
+		}
+	})
+})
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`)

@@ -5,11 +5,18 @@ import moment from "moment"
 import * as Location from "expo-location"
 import * as LocalAuthentication from "expo-local-authentication"
 import axios from "axios"
+import { calculateDistance } from "../../utils/getLocationDistance"
 
 export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 	const [location, setLocation] = useState(null)
 	const [activeButton, setActiveButton] = useState(null)
 	const [schedules, setSchedules] = useState(null)
+
+	const buetLatLong = {
+		latitude: 23.726684,
+		longitude: 90.388742,
+		acceptDistance: 10.5,
+	}
 
 	useEffect(() => {
 		;(async () => {
@@ -23,6 +30,8 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 			setLocation(currentLocation.coords)
 		})()
 	}, [])
+
+	console.log(location)
 
 	useEffect(() => {
 		if (!activeButton) return
@@ -45,7 +54,7 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 
 	const classDetails = schedules?.[0]?.classDetails ? JSON.parse(schedules?.[0]?.classDetails) : []
 
-	console.log(classDetails)
+	// console.log(classDetails)
 
 	const now = moment() // Current time using Moment.js
 
@@ -61,6 +70,10 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 	})
 
 	const registerFingerprint = async () => {
+		let distance = calculateDistance(buetLatLong?.latitude, buetLatLong?.longitude, location?.latitude, location?.longitude)
+
+		if (distance > buetLatLong?.acceptDistance) return Toast.error("Attendance is not allowed outside the BUET campus")
+
 		try {
 			const hasHardware = await LocalAuthentication.hasHardwareAsync()
 			if (!hasHardware) {
@@ -79,7 +92,21 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 			})
 
 			if (result.success) {
-				Alert.alert("Success", "Fingerprint registered successfully!")
+				let data = {
+					course_code: activeButton,
+					student_email: studentInfo?.email,
+					present_status: "P",
+					datetime: moment().format("DD-MM-YYYY"),
+				}
+
+				try {
+					const res = await axios.post("http://192.168.4.73:3001/api/attendanceSubmit", data)
+					if (res?.data) {
+						Toast.success(res.data?.message)
+					}
+				} catch (err) {
+					Toast.error(err?.message ? err?.message : "Something wrong")
+				}
 			} else {
 				Alert.alert("Error", "Fingerprint registration failed")
 			}
