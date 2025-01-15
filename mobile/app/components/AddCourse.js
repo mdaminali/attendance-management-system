@@ -43,7 +43,7 @@ export default function AddCourse({ courses, studentInfo, setStudentInfo }) {
 			}
 
 			try {
-				const res = await axios.post("http://192.168.4.73:3001/api/addCourseByStudent", data)
+				const res = await axios.post("http://192.168.4.102:3001/api/addCourseByStudent", data)
 				// console.log("data", res?.data)
 				if (res?.data) {
 					Toast.success(res.data?.message)
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 		width: 20,
 		height: 20,
 		borderWidth: 2,
-		borderColor: "#007AFF",
+		borderColor: "#32a852",
 		borderRadius: 3,
 		marginRight: 10,
 		justifyContent: "center",
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
 	checked: {
 		width: 12,
 		height: 12,
-		backgroundColor: "#007AFF",
+		backgroundColor: "#32a852",
 	},
 	label: {
 		fontSize: 16,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
 
 	submitButton: {
 		marginTop: 20,
-		backgroundColor: "#007AFF",
+		backgroundColor: "#32a852",
 		padding: 15,
 		borderRadius: 5,
 		alignItems: "center",

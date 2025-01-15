@@ -44,7 +44,7 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 
 	const getSchedule = async () => {
 		try {
-			const res = await axios.get(`http://192.168.4.73:3001/api/codeWiseSchedule?code=${activeButton}`)
+			const res = await axios.get(`http://192.168.4.102:3001/api/codeWiseSchedule?code=${activeButton}`)
 
 			if (res.data) {
 				setSchedules(res.data)
@@ -59,7 +59,7 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 	const getAttendance = async () => {
 		try {
 			const todayDate = moment().format("DD-MM-YYYY")
-			const res = await axios.get(`http://192.168.4.73:3001/api/studentAndCodeWiseAttendance?student_email=${studentInfo?.email}&course_code=${activeButton}&datetime=${todayDate}`)
+			const res = await axios.get(`http://192.168.4.102:3001/api/studentAndCodeWiseAttendance?student_email=${studentInfo?.email}&course_code=${activeButton}&datetime=${todayDate}`)
 
 			if (res?.data?.length > 0) {
 				setTodayAttendance(res.data)
@@ -119,7 +119,7 @@ export default function Attendance({ courses, studentInfo, setStudentInfo }) {
 				}
 
 				try {
-					const res = await axios.post("http://192.168.4.73:3001/api/attendanceSubmit", data)
+					const res = await axios.post("http://192.168.4.102:3001/api/attendanceSubmit", data)
 					if (res?.data) {
 						Toast.success(res.data?.message)
 						getAttendance()
@@ -198,8 +198,8 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 	},
 	activeButton: {
-		backgroundColor: "#007bff",
-		borderColor: "#0056b3",
+		backgroundColor: "#32a852",
+		borderColor: "#32a852",
 	},
 	buttonText: {
 		color: "#000",
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
 	},
 	submitButton: {
 		marginTop: 20,
-		backgroundColor: "#007AFF",
+		backgroundColor: "#32a852",
 		padding: 15,
 		borderRadius: 5,
 		alignItems: "center",

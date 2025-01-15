@@ -32,7 +32,7 @@ const Login = () => {
 		console.log(data)
 
 		try {
-			const res = await axios.post("http://192.168.4.73:3001/api/studentLogin", data)
+			const res = await axios.post("http://192.168.4.102:3001/api/studentLogin", data)
 			console.log("data", res?.data)
 			if (res?.data) {
 				Toast.success(res.data?.message)

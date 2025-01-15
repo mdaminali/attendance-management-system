@@ -7,6 +7,7 @@ import { useRouter } from "expo-router"
 import axios from "axios"
 import Attendance from "./components/Attendance"
 import AddCourse from "./components/AddCourse"
+import Notice from "./components/Notice"
 
 export default function Home() {
 	const router = useRouter()
@@ -49,7 +50,7 @@ export default function Home() {
 
 	const getCourses = async () => {
 		try {
-			const res = await axios.get(`http://192.168.4.73:3001/api/allCourses`)
+			const res = await axios.get(`http://192.168.4.102:3001/api/allCourses`)
 			console.log("Server response:", res)
 
 			if (res.data) {
@@ -93,6 +94,7 @@ export default function Home() {
 			{currentMenu === "Add course" && <AddCourse courses={courses} studentInfo={studentInfo} setStudentInfo={setStudentInfo} />}
 
 			{currentMenu === "Attendance" && <Attendance courses={courses} studentInfo={studentInfo} setStudentInfo={setStudentInfo} />}
+			{currentMenu === "Notice" && <Notice />}
 
 			{menuVisible && (
 				<View style={styles.sidebar}>
