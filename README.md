@@ -53,8 +53,8 @@ An advanced **Attendance Management System** built with **Next.js** for the fron
 ### **Clone the Repository**
 
 ```bash
-git clone https://github.com/aminmithun/attendance_management.git
-cd attendance_management
+git clone https://github.com/aminmithun/attendance-management-system.git
+cd attendance-management-system
 ```
 
 ### **Backend Setup**
